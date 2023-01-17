@@ -31,7 +31,7 @@ def card(request):
 
 
 def quiz(request):
-    return render(request, 'order.html', context={})
+    return render(request, 'quiz.html', context={})
 
 
 def result(request):
