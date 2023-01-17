@@ -15,7 +15,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from flower_order import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-]
+    path('', views.index, name='index'),
+    path('card/', views.card, name='card'),
+    path('catalog/', views.catalog, name='catalog'),
+    path('consultation/', views.consultation, name='consultation'),
+    path('order-step/', views.order_step, name='order-step'),
+    path('order/', views.order, name='order'),
+    path('quiz/', views.quiz, name='quiz'),
+    path('result/', views.result, name='result')
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
