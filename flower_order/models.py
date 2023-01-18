@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import FileExtensionValidator
+from django.utils import timezone
 from phonenumber_field.modelfields import PhoneNumberField
 
 
@@ -40,7 +41,7 @@ class Bouquet(models.Model):
         blank=True,
         null=True,
         upload_to='images/bouquets',
-        validators=[FileExtensionValidator(['png', 'jpeg', 'svg'])],
+        validators=[FileExtensionValidator(['png', 'jpg', 'jpeg', 'svg'])],
     )
     discription = models.TextField(
         verbose_name='Описание',
@@ -87,7 +88,7 @@ class Shop(models.Model):
         blank=True,
         null=True,
         upload_to='images/shops',
-        validators=[FileExtensionValidator(['png', 'jpeg', 'svg'])],
+        validators=[FileExtensionValidator(['png', 'jpg', 'jpeg', 'svg'])],
     )
     latitude = models.DecimalField(
         verbose_name='Широта',
@@ -216,6 +217,10 @@ class Order(models.Model):
         blank=True,
         max_length=200,
         null=True,
+    )
+    delivery_at = models.DateTimeField(
+        verbose_name='Когда доставить',
+        default=timezone.now() + timezone.timedelta(1)
     )
     bouquets = models.ManyToManyField(
         Bouquet,
