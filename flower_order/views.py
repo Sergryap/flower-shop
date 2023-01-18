@@ -6,7 +6,7 @@ from .models import Bouquet
 
 class BouquetListView(ListView):
     model = Bouquet
-    context_object_name = 'bouquets'
+    context_object_name = 'bouquets' # Переменная, которая попадает в шаблон
     template_name = "flower_order/index.html"
 
 
