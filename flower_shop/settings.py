@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'flower_order'
+    'flower_order.apps.FlowerOrderConfig',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
