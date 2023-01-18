@@ -21,16 +21,17 @@ class Consultation(TemplateView):
 
 
 class Order(TemplateView):
-
-    def get(self, request, *args, **kwargs):
-        context = super().get(request, *args, **kwargs)
-        if self.request.GET:
-            context['delivery_data'] = self.request.GET
-        return context
     template_name = "flower_order/order.html"
 
 
 class OrderStep(TemplateView):
+    def get(self, request, *args, **kwargs):
+        context = super().get(request, *args, **kwargs)
+        if self.request.GET:
+            print(self.request.GET)
+            context['delivery_data'] = self.request.GET
+            # Добавить еще логики
+        return context
     template_name = "flower_order/order-step.html"
 
 
