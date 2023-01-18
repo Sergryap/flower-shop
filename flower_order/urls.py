@@ -1,10 +1,12 @@
 from django.urls import path
 
-from .views import BouquetListView
+from .views import BouquetListView, CatalogListView, Consultation
 
 
 app_name = "flower_order"
 
 urlpatterns = [
-    path('index/', BouquetListView.as_view()),
+    path('', BouquetListView.as_view()),
+    path('catalog/', CatalogListView.as_view()),
+    path('consultation/', Consultation.as_view())
 ]
