@@ -25,6 +25,13 @@ class Order(TemplateView):
 
 
 class OrderStep(TemplateView):
+    def get(self, request, *args, **kwargs):
+        context = super().get(request, *args, **kwargs)
+        if self.request.GET:
+            print(self.request.GET)
+            context['delivery_data'] = self.request.GET
+            # Добавить еще логики
+        return context
     template_name = "flower_order/order-step.html"
 
 
