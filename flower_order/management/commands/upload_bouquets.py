@@ -41,6 +41,6 @@ class Command(BaseCommand):
             bouquet_obj.categories.add(category_obj)
 
         if bouquet_created:
-            self.stdout.write(f'Added product "{bouquet_obj}".')
+            self.stdout.write(f'Added bouquet "{bouquet_obj}".')
         else:
-            self.stdout.write(f'\033[93mDOUBLE:\033[0m product "{bouquet_obj}" already exists!')
+            self.stdout.write(f'\033[93mDOUBLE:\033[0m bouquet "{bouquet_obj}" already exists!')
