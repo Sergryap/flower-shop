@@ -36,6 +36,6 @@ class Command(BaseCommand):
         )
 
         if created:
-            self.stdout.write(f'Added shop "{shop}".')
+            self.stdout.write(f'Created shop "{shop}".')
         else:
             self.stdout.write(f'\033[93mDOUBLE:\033[0m shop "{shop}" already exists!')

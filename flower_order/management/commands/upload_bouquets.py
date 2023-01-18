@@ -34,13 +34,17 @@ class Command(BaseCommand):
                 'width': bouquet_notes.get('width', 20),
             }
         )
-        print(bouquet_obj, bouquet_created)
+
         for category in bouquet_notes.get('categories', ['Без повода']):
-            print(category)
             category_obj, category_created = Category.objects.get_or_create(title=category)
             bouquet_obj.categories.add(category_obj)
 
         if bouquet_created:
-            self.stdout.write(f'Added bouquet "{bouquet_obj}".')
+            self.stdout.write(f'Created bouquet "{bouquet_obj}".')
         else:
             self.stdout.write(f'\033[93mDOUBLE:\033[0m bouquet "{bouquet_obj}" already exists!')
+
+        for category in bouquet_notes.get('categories', ['Без повода']):
+            category_obj, category_created = Category.objects.get_or_create(title=category)
+            bouquet_obj.categories.add(category_obj)
+            self.stdout.write(f'\tAdded category "{category_obj}".')
