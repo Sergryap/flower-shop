@@ -38,8 +38,8 @@ class Order(TemplateView):
 
 
 class OrderStep(TemplateView):
-    def get(self, request, *args, **kwargs):
-        context = super().get(request, *args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         if self.request.GET:
             print(self.request.GET)
             context['delivery_data'] = self.request.GET
