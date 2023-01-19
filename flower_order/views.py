@@ -55,14 +55,14 @@ class Quiz(TemplateView):
 class QuizStep(TemplateView):
     template_name = "flower_order/quiz-step.html"
 
-    def get(self, request, *args, **kwargs):
-        context = super().get(request, *args, **kwargs)
-        if request.GET.get('marriage'):
-            print('marriage')
-        elif request.GET.get('birthday'):
-            print('birthday')
-        elif request.GET.get('empty'):
-            print('empty')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.GET.get('marriage'):
+            context['event'] = 'marriage'
+        elif self.request.GET.get('birthday'):
+            context['event'] = 'birthday'
+        else:
+            context['event'] = 'empty'
         return context
 
 
