@@ -7,13 +7,21 @@ from .models import Bouquet
 class BouquetListView(ListView):
     model = Bouquet
     queryset = Bouquet.objects.all()[:3]
-    context_object_name = 'bouquets' # Переменная, которая попадает в шаблон
+    context_object_name = 'bouquets'
     template_name = "flower_order/index.html"
 
 
 class CatalogListView(ListView):
     model = Bouquet
+    queryset = Bouquet.objects.all()
     context_object_name = 'bouquets'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['block1'] = Bouquet.objects.all()[:3]
+        context['block2'] = Bouquet.objects.all()[3:6]
+        return context
+
     template_name = "flower_order/catalog.html"
 
 
