@@ -6,6 +6,7 @@ from .models import Bouquet
 
 class BouquetListView(ListView):
     model = Bouquet
+    queryset = Bouquet.objects.all()[:3]
     context_object_name = 'bouquets' # Переменная, которая попадает в шаблон
     template_name = "flower_order/index.html"
 
