@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from django.views.generic import ListView, View, DetailView, TemplateView
 from django.views.generic.detail import TemplateResponseMixin
 from django.views.generic.list import BaseListView, MultipleObjectTemplateResponseMixin, ContextMixin
@@ -18,6 +20,8 @@ class CatalogListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # item_quantity = Bouquet.objects.count()
+        # if self.request.resolver_match.url_name == 'catalog':
         context['block1'] = Bouquet.objects.all()[:3]
         context['block2'] = Bouquet.objects.all()[3:6]
         return context
@@ -34,22 +38,48 @@ class Order(TemplateView):
 
 
 class OrderStep(TemplateView):
-    def get(self, request, *args, **kwargs):
-        context = super().get(request, *args, **kwargs)
+    template_name = "flower_order/order-step.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         if self.request.GET:
-            print(self.request.GET)
-            context['delivery_data'] = self.request.GET
+            first_name = self.request.GET.get('fname', '')
+            tel = self.request.GET.get('tel', '')
+            address = self.request.GET.get('address', '')
+
             # Добавить еще логики
         return context
-    template_name = "flower_order/order-step.html"
 
 
 class Quiz(TemplateView):
     template_name = "flower_order/quiz.html"
 
 
+class QuizStep(TemplateView):
+    template_name = "flower_order/quiz-step.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.GET.get('marriage'):
+            context['event'] = 'marriage'
+        elif self.request.GET.get('birthday'):
+            context['event'] = 'birthday'
+        else:
+            context['event'] = 'empty'
+        return context
+
+
 class Result(TemplateView):
     template_name = "flower_order/result.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.GET:
+            event, price = self.request.GET.get('event', '').split('_')
+            context['event'] = event  # Эти переменные можно использовать для шаблона
+            context['price'] = price
+            print(event, price)
+        return context
 
 
 class Card(TemplateView):

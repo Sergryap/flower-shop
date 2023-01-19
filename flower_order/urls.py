@@ -7,6 +7,7 @@ from .views import (
     Order,
     OrderStep,
     Quiz,
+    QuizStep,
     Result,
     Card
 )
@@ -22,6 +23,7 @@ urlpatterns = [
     path('order/', Order.as_view(), name='order'),
     path('order-step/', OrderStep.as_view(), name='order_step'),
     path('quiz/', Quiz.as_view(), name='quiz'),
-    path('result/', Result.as_view()),
-    path('card/', Card.as_view()),
+    path('quiz-step/', QuizStep.as_view(), name='quiz_step'),
+    path('result/', Result.as_view(), name='result'),
+    path('card/', Card.as_view(), name='card'),
 ]

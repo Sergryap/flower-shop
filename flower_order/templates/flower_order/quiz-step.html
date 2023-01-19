@@ -11,10 +11,13 @@
 				<div class="quiz__block">
 					<h1 class="quiz__title">На какой бюджет рассчитываете?</h1>
 					<div class="quiz__elems fic">
-						<button class="quiz__elem">До 1 000 руб</button>
-						<button class="quiz__elem">1 000 - 5 000 руб</button>
-						<button class="quiz__elem">от 5 000 руб</button>
-						<button class="quiz__elem">Не имеет значения</button>
+						<form action="{% url 'flower_order:result' %}">
+							<button class="quiz__elem" name="event" value="{{ event }}_1">До 1 000 руб</button>
+							<button class="quiz__elem" name="event" value="{{ event }}_5">1 000 - 5 000 руб</button>
+							<button class="quiz__elem" name="event" value="{{ event }}_more">от 5 000 руб</button>
+							<button class="quiz__elem" name="event" value="{{ event }}_any">Не имеет значения</button>
+						</form>
+
 					</div>
 					<div class="quiz__progress">
 						<div class="quiz__progress_step">
