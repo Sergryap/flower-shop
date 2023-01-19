@@ -11,9 +11,12 @@
 				<div class="quiz__block">
 					<h1 class="quiz__title">К какому событию нужен букет?</h1>
 					<div class="quiz__elems fic">
-						<button class="quiz__elem">Свадьба</button>
-						<button class="quiz__elem">День рождения</button>
-						<button class="quiz__elem">Без повода</button>
+						<form action="{% url 'flower_order:quiz_step' %}">
+							<button class="quiz__elem" type="submit" name="marriage" value="1">Свадьба</button>
+							<button class="quiz__elem" type="submit" name="birthday" value="1">День рождения</button>
+							<button class="quiz__elem" type="submit" name="empty" value="1">Без повода</button>
+						</form>
+
 					</div>
 					<div class="quiz__progress">
 						<div class="quiz__progress_step">

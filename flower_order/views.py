@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from django.views.generic import ListView, View, DetailView, TemplateView
 from django.views.generic.detail import TemplateResponseMixin
 from django.views.generic.list import BaseListView, MultipleObjectTemplateResponseMixin, ContextMixin
@@ -52,6 +54,16 @@ class Quiz(TemplateView):
 
 class QuizStep(TemplateView):
     template_name = "flower_order/quiz-step.html"
+
+    def get(self, request, *args, **kwargs):
+        context = super().get(request, *args, **kwargs)
+        if request.GET.get('marriage'):
+            print('marriage')
+        elif request.GET.get('birthday'):
+            print('birthday')
+        elif request.GET.get('empty'):
+            print('empty')
+        return context
 
 
 class Result(TemplateView):
