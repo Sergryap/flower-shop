@@ -72,6 +72,15 @@ class QuizStep(TemplateView):
 class Result(TemplateView):
     template_name = "flower_order/result.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.GET:
+            event, price = self.request.GET.get('event', '').split('_')
+            context['event'] = event  # Эти переменные можно использовать для шаблона
+            context['price'] = price
+            print(event, price)
+        return context
+
 
 class Card(TemplateView):
     template_name = "flower_order/card.html"
