@@ -1,6 +1,29 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block body_contain %}
+{% block add_style %}
+<style>
+.recommended__elems_first .recommended__block_first {
+	background: url('../../../static/img/catalog/catalogBg1.jpg') no-repeat center bottom / cover;
+}
+.recommended__elems_first .recommended__block_sec {
+	background: url('../../../static/img/catalog/catalogBg1.jpg') no-repeat center bottom / cover;
+}
+.recommended__elems_first .recommended__block_thr {
+	background: url('../../../static/img/catalog/catalogBg2.jpg') no-repeat center bottom / cover;
+}
+.recommended__elems_sec .recommended__block_first {
+	background: url('../../../static/img/catalog/catalogBg3.jpg') no-repeat center bottom / cover;
+}
+.recommended__elems_sec .recommended__block_sec {
+	background: url('../../../static/img/catalog/catalogBg4.jpg') no-repeat center bottom / cover;
+}
+.recommended__elems_sec .recommended__block_thr {
+	background: url('../../../static/img/catalog/catalogBg4.jpg') no-repeat center bottom / cover;
+}
+</style>
+
+{% endblock %}
 	<section id="catalog">
 		<div class="container p100">
 			<div class="catalog">
