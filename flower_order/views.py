@@ -1,9 +1,10 @@
 from pprint import pprint
 
+from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, View, DetailView, TemplateView
 from django.views.generic.detail import TemplateResponseMixin
 from django.views.generic.list import BaseListView, MultipleObjectTemplateResponseMixin, ContextMixin
-from .models import Bouquet
+from .models import Bouquet, Category
 
 
 class BouquetListView(ListView):
@@ -69,8 +70,20 @@ class QuizStep(TemplateView):
         return context
 
 
-class Result(TemplateView):
+class Result(ListView):
     template_name = "flower_order/result.html"
+    context_object_name = 'bouquets'
+
+    def get_queryset(self):
+        if self.request.GET:
+            event, price = self.request.GET.get('event', '').split('_')
+            category_name = {'empty': 'Без повода', 'marriage': 'Свадьба', 'birthday': 'День рождения'}
+            price_value = {'1': (0, 1000), '2': (1000, 5000), '3': (5000, 1000000), '4': (0, 1000000)}
+            category = get_object_or_404(Category, title=category_name[event])
+            return category.bouquets.all().filter(
+                price__gt=price_value[price][0],
+                price__lte=price_value[price][1]
+            )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
