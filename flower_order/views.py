@@ -18,6 +18,8 @@ class CatalogListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # item_quantity = Bouquet.objects.count()
+        # if self.request.resolver_match.url_name == 'catalog':
         context['block1'] = Bouquet.objects.all()[:3]
         context['block2'] = Bouquet.objects.all()[3:6]
         return context
@@ -46,6 +48,10 @@ class OrderStep(TemplateView):
 
 class Quiz(TemplateView):
     template_name = "flower_order/quiz.html"
+
+
+class QuizStep(TemplateView):
+    template_name = "flower_order/quiz-step.html"
 
 
 class Result(TemplateView):
