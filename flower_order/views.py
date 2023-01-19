@@ -80,7 +80,7 @@ class Result(ListView):
             category_name = {'empty': 'Без повода', 'marriage': 'Свадьба', 'birthday': 'День рождения'}
             price_value = {'1': (0, 1000), '2': (1000, 5000), '3': (5000, 1000000), '4': (0, 1000000)}
             category = get_object_or_404(Category, title=category_name[event])
-            return category.bouquets.all().filter(
+            return category.bouquets.filter(
                 price__gt=price_value[price][0],
                 price__lte=price_value[price][1]
             )
