@@ -48,7 +48,10 @@
 							</div>
 						{% endfor %}
 					</div>
-					<button class="btn largeBtn catalog__btn">Показать ещё</button>
+					<form action="{% url 'flower_order:all_catalog' %}">
+						<button class="btn largeBtn catalog__btn">Показать ещё</button>
+					</form>
+
 				</div>
 			</div>
 		</div>
