@@ -142,15 +142,15 @@ class Staff(models.Model):
         verbose_name_plural = 'сотрудники'
 
     def __str__(self):
-        return f'{self.position}: {self.surname} {self.name}'
+        return f'{self.get_position_display()}: {self.surname} {self.name}'
 
 
 class Client(models.Model):
     phonenumber = PhoneNumberField(
         verbose_name='Телефон',
         db_index=True,
-        # region='RU',
-        # unique=True,
+        region='RU',
+        unique=True,
     )
     name = models.CharField(
         verbose_name='Имя',
@@ -233,4 +233,4 @@ class Order(models.Model):
         verbose_name_plural = 'заказы'
 
     def __str__(self):
-        return f'{self.service} {self.status} {self.client}'
+        return f'{self.get_service_display() } - {self.get_status_display() } - {self.client}'
