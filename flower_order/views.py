@@ -38,14 +38,17 @@ class Order(TemplateView):
 
 
 class OrderStep(TemplateView):
+    template_name = "flower_order/order-step.html"
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.GET:
-            print(self.request.GET)
-            context['delivery_data'] = self.request.GET
+            first_name = self.request.GET.get('fname', '')
+            tel = self.request.GET.get('tel', '')
+            address = self.request.GET.get('address', '')
+
             # Добавить еще логики
         return context
-    template_name = "flower_order/order-step.html"
 
 
 class Quiz(TemplateView):
