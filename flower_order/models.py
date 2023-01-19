@@ -149,8 +149,8 @@ class Client(models.Model):
     phonenumber = PhoneNumberField(
         verbose_name='Телефон',
         db_index=True,
-        # region='RU',
-        # unique=True,
+        region='RU',
+        unique=True,
     )
     name = models.CharField(
         verbose_name='Имя',
