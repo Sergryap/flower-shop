@@ -226,6 +226,13 @@ class Order(models.Model):
         Bouquet,
         verbose_name='Букеты',
         related_name='orders',
+        null=True
+    )
+    comment = models.CharField(
+        verbose_name='Комментарий',
+        max_length=100,
+        null=True,
+        blank=True
     )
 
     class Meta:

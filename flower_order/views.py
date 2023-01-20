@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, TemplateView
-from .models import Bouquet, Category, Shop
+from .models import Bouquet, Category, Shop, Client, Order
 import re
 
 
@@ -36,7 +36,7 @@ class Consultation(TemplateView):
     template_name = "flower_order/consultation.html"
 
 
-class Order(TemplateView):
+class OrderView(TemplateView):
     template_name = "flower_order/order.html"
 
 
@@ -46,14 +46,19 @@ class OrderStep(TemplateView):
         self.template_name = "flower_order/order-step.html"
         context = super().get_context_data(**kwargs)
         if self.request.GET:
-            first_name = self.request.GET.get('fname', '')
             tel = self.request.GET.get('tel', '')
-            address = self.request.GET.get('address', '')
             pattern = re.compile(r'^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$')
             if not bool(pattern.findall(tel)):
                 self.template_name = "flower_order/order.html"
-
-            # Добавить еще логики
+            else:
+                first_name = self.request.GET.get('fname', '')
+                address = self.request.GET.get('address', '')
+                order_time = self.request.GET.get('orderTime', '')
+                client, __ = Client.objects.get_or_create(
+                    phonenumber=tel,
+                    defaults={'name': first_name}
+                )
+                Order.objects.create(client=client, address=address, comment=order_time)
         return context
 
 
