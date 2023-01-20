@@ -39,6 +39,11 @@ class Consultation(TemplateView):
 class OrderView(TemplateView):
     template_name = "flower_order/order.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['bouquet_pk'] = self.request.GET.get('bouquet', 0)
+        return context
+
 
 class OrderStep(TemplateView):
 
@@ -53,12 +58,16 @@ class OrderStep(TemplateView):
             else:
                 first_name = self.request.GET.get('fname', '')
                 address = self.request.GET.get('address', '')
+                bouquet_pk = self.request.GET.get('bouquet', '0')
                 order_time = self.request.GET.get('orderTime', '')
                 client, __ = Client.objects.get_or_create(
                     phonenumber=tel,
                     defaults={'name': first_name}
                 )
-                Order.objects.create(client=client, address=address, comment=order_time)
+                order = Order.objects.create(client=client, address=address, comment=order_time)
+                if bouquet_pk and int(bouquet_pk):
+                    bouquet = Bouquet.objects.get(pk=bouquet_pk)
+                    order.bouquets.add(bouquet)
         return context
 
 

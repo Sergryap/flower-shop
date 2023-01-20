@@ -225,8 +225,7 @@ class Order(models.Model):
     bouquets = models.ManyToManyField(
         Bouquet,
         verbose_name='Букеты',
-        related_name='orders',
-        null=True
+        related_name='orders'
     )
     comment = models.CharField(
         verbose_name='Комментарий',
