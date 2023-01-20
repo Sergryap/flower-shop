@@ -3,3 +3,4 @@ django-extensions==3.2.1
 django-phonenumber-field==7.0.2
 phonenumbers==8.13.4
 Pillow==9.4.0
+environs==9.5.0
