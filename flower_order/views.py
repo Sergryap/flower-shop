@@ -52,7 +52,9 @@ class OrderStep(TemplateView):
         return context
 
 
-class Quiz(TemplateView):
+class Quiz(ListView):
+    model = Category
+    context_object_name = 'categories'
     template_name = "flower_order/quiz.html"
 
 
@@ -61,12 +63,15 @@ class QuizStep(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.request.GET.get('marriage'):
-            context['event'] = 'marriage'
-        elif self.request.GET.get('birthday'):
-            context['event'] = 'birthday'
-        else:
-            context['event'] = 'empty'
+        context['event'] = self.request.GET.get('event', '')
+        prices = [
+            {'min': '0', 'max': '1000', 'text': 'До 1 000 руб'},
+            {'min': '1000', 'max': '5000', 'text': '1 000 - 5 000 руб'},
+            {'min': '5000', 'max': '1000000', 'text': 'от 5 000 руб'},
+            {'min': '0', 'max': '1000000', 'text': 'Не имеет значения'}
+        ]
+        context['prices'] = prices
+
         return context
 
 
@@ -76,22 +81,20 @@ class Result(ListView):
 
     def get_queryset(self):
         if self.request.GET:
-            event, price = self.request.GET.get('event', '').split('_')
-            category_name = {'empty': 'Без повода', 'marriage': 'Свадьба', 'birthday': 'День рождения'}
-            price_value = {'1': (0, 1000), '2': (1000, 5000), '3': (5000, 1000000), '4': (0, 1000000)}
-            category = get_object_or_404(Category, title=category_name[event])
+            event, min_price, max_price = self.request.GET.get('event', '').split('_')
+            print(event, min_price, max_price)
+            # category_name = {'empty': 'Без повода', 'marriage': 'Свадьба', 'birthday': 'День рождения'}
+            # price_value = {'1': (0, 1000), '2': (1000, 5000), '3': (5000, 1000000), '4': (0, 1000000)}
+            category = get_object_or_404(Category, title=event)
             return category.bouquets.filter(
-                price__gt=price_value[price][0],
-                price__lte=price_value[price][1]
+                price__gt=int(min_price),
+                price__lte=int(max_price)
             )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.GET:
-            event, price = self.request.GET.get('event', '').split('_')
-            context['event'] = event  # Эти переменные можно использовать для шаблона
-            context['price'] = price
-            print(event, price)
+            event, min_price, max_price = self.request.GET.get('event', '').split('_')
         return context
 
 

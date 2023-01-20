@@ -12,10 +12,12 @@
 					<h1 class="quiz__title">На какой бюджет рассчитываете?</h1>
 					<div class="quiz__elems fic">
 						<form action="{% url 'flower_order:result' %}">
-							<button class="quiz__elem" name="event" value="{{ event }}_1">До 1 000 руб</button>
-							<button class="quiz__elem" name="event" value="{{ event }}_2">1 000 - 5 000 руб</button>
-							<button class="quiz__elem" name="event" value="{{ event }}_3">от 5 000 руб</button>
-							<button class="quiz__elem" name="event" value="{{ event }}_4">Не имеет значения</button>
+							{% for price in prices %}
+							<button class="quiz__elem" name="event" value="{{ event }}_{{ price.min }}_{{ price.max }}">{{ price.text }}</button>
+<!--							<button class="quiz__elem" name="event" value="{{ event }}_2">1 000 - 5 000 руб</button>-->
+<!--							<button class="quiz__elem" name="event" value="{{ event }}_3">от 5 000 руб</button>-->
+<!--							<button class="quiz__elem" name="event" value="{{ event }}_4">Не имеет значения</button>-->
+							{% endfor %}
 						</form>
 
 					</div>
