@@ -1,9 +1,5 @@
-from pprint import pprint
-
 from django.shortcuts import get_object_or_404
-from django.views.generic import ListView, View, DetailView, TemplateView
-from django.views.generic.detail import TemplateResponseMixin
-from django.views.generic.list import BaseListView, MultipleObjectTemplateResponseMixin, ContextMixin
+from django.views.generic import ListView, TemplateView
 from .models import Bouquet, Category
 
 
