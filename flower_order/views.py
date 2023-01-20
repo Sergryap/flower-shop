@@ -63,12 +63,16 @@ class QuizStep(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['event'] = self.request.GET.get('event', '')
+        event = self.request.GET.get('event', '')
+        category = get_object_or_404(Category, title=event)
+        context['event'] = event
+        max_price = round(category.bouquets.order_by('-price').first().price, 0)
+        min_price = round(category.bouquets.order_by('price').first().price, 0)
         prices = [
-            {'min': '0', 'max': '1000', 'text': 'До 1 000 руб'},
-            {'min': '1000', 'max': '5000', 'text': '1 000 - 5 000 руб'},
-            {'min': '5000', 'max': '1000000', 'text': 'от 5 000 руб'},
-            {'min': '0', 'max': '1000000', 'text': 'Не имеет значения'}
+            {'min': '0', 'max': f'{min_price + 100}', 'text': f'До {min_price + 100} руб'},
+            {'min': f'{min_price + 100}', 'max': f'{max_price - 100}', 'text': f'{min_price + 100} - {max_price - 100} руб'},
+            {'min': f'{max_price - 100}', 'max': 1000000, 'text': f'От {max_price - 100}'},
+            {'min': 0, 'max': 1000000, 'text': 'Не имеет значения'}
         ]
         context['prices'] = prices
 
@@ -77,25 +81,16 @@ class QuizStep(TemplateView):
 
 class Result(ListView):
     template_name = "flower_order/result.html"
-    context_object_name = 'bouquets'
+    context_object_name = 'bouquet'
 
     def get_queryset(self):
         if self.request.GET:
             event, min_price, max_price = self.request.GET.get('event', '').split('_')
-            print(event, min_price, max_price)
-            # category_name = {'empty': 'Без повода', 'marriage': 'Свадьба', 'birthday': 'День рождения'}
-            # price_value = {'1': (0, 1000), '2': (1000, 5000), '3': (5000, 1000000), '4': (0, 1000000)}
             category = get_object_or_404(Category, title=event)
             return category.bouquets.filter(
                 price__gt=int(min_price),
                 price__lte=int(max_price)
-            )
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if self.request.GET:
-            event, min_price, max_price = self.request.GET.get('event', '').split('_')
-        return context
+            ).order_by('?').first()
 
 
 class Card(TemplateView):
