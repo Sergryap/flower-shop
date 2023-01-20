@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, TemplateView
-from .models import Bouquet, Category
+from .models import Bouquet, Category, Shop
 
 
 class BouquetListView(ListView):
@@ -8,6 +8,12 @@ class BouquetListView(ListView):
     queryset = Bouquet.objects.all()[:3]
     context_object_name = 'bouquets'
     template_name = "flower_order/index.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['shops'] = Shop.objects.all()
+        return context
+
 
 
 class CatalogListView(ListView):
