@@ -4,9 +4,6 @@ from .models import Bouquet, Category, Shop, Client, Order
 from django.db.models import Window, F
 from django.db.models.functions import DenseRank
 import re
-import os
-from payment_bot import payment_send
-from django.conf import settings
 
 
 class ConsultationSendMixin:
