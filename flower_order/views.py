@@ -4,6 +4,9 @@ from .models import Bouquet, Category, Shop, Client, Order
 from django.db.models import Window, F
 from django.db.models.functions import DenseRank
 import re
+import os
+from payment_bot import payment_send
+from django.conf import settings
 
 
 class ConsultationSendMixin:
@@ -109,6 +112,19 @@ class OrderStep(TemplateView, ConsultationSendMixin):
                 if bouquet_pk and int(bouquet_pk):
                     bouquet = Bouquet.objects.get(pk=bouquet_pk)
                     order.bouquets.add(bouquet)
+                    context['price'] = bouquet.price
+        # блок оплаты
+        if self.request.GET.get('price', ''):
+            self.template_name = "flower_order/order-step.html"
+            card_num = self.request.GET.get('cardNum', '')
+            card_month = self.request.GET.get('cardMm', '')
+            card_year = self.request.GET.get('cardGg', '')
+            card_name = self.request.GET.get('cardFname', '')
+            card_cvc = self.request.GET.get('cardCvc', '')
+            card_mail = self.request.GET.get('mail', '')
+            price = int(self.request.GET.get('price', 0))
+            print(card_name, card_month, card_year, card_cvc, price)
+            #payment_send(payment_bot=settings.BOT, value=round(price, 0), chat_id=os.environ['TELEGRAM_ID']) #тестовая оплата через бота
         return context
 
 

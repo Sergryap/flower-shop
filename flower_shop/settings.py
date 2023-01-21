@@ -12,10 +12,13 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 from environs import Env
+from telegram.bot import Bot
 
 
 env = Env()
 env.read_env()
+token_tg = env('TELEGRAM_TOKEN')
+BOT = Bot(token=token_tg)
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
