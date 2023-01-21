@@ -7,11 +7,16 @@ import re
 
 
 class ConsultationSend:
+
+    @staticmethod
+    def phone_verify(tel):
+        pattern = re.compile(r'^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$')
+        return bool(pattern.findall(tel))
+
     def consultation_send(self):
         if self.request.GET:
             tel = self.request.GET.get('tel', '')
-            pattern = re.compile(r'^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$')
-            if bool(pattern.findall(tel)):
+            if self.phone_verify(tel):
                 first_name = self.request.GET.get('fname', '')
                 tel = ''.join(['+7'] + [i for i in tel if i.isdigit()][-10:])
                 Client.objects.get_or_create(phonenumber=tel, defaults={'name': first_name})
@@ -91,8 +96,7 @@ class OrderStep(TemplateView, ConsultationSend):
         self.consultation_send()
         if self.request.GET:
             tel = self.request.GET.get('tel', '')
-            pattern = re.compile(r'^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$')
-            if not bool(pattern.findall(tel)):
+            if not self.phone_verify(tel):
                 self.template_name = "flower_order/order.html"
             else:
                 first_name = self.request.GET.get('fname', '')
