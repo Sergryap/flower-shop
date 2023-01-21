@@ -6,7 +6,18 @@ from django.db.models.functions import DenseRank
 import re
 
 
-class BouquetListView(ListView):
+class ConsultationSend:
+    def consultation_send(self):
+        if self.request.GET:
+            tel = self.request.GET.get('tel', '')
+            pattern = re.compile(r'^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$')
+            if bool(pattern.findall(tel)):
+                first_name = self.request.GET.get('fname', '')
+                tel = ''.join(['+7'] + [i for i in tel if i.isdigit()][-10:])
+                Client.objects.get_or_create(phonenumber=tel, defaults={'name': first_name})
+
+
+class BouquetListView(ListView, ConsultationSend):
     model = Bouquet
     queryset = Bouquet.objects.all()[:3]
     context_object_name = 'bouquets'
@@ -15,17 +26,11 @@ class BouquetListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['shops'] = Shop.objects.all()
-        if self.request.GET:
-            tel = self.request.GET.get('tel', '')
-            pattern = re.compile(r'^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$')
-            if bool(pattern.findall(tel)):
-                first_name = self.request.GET.get('fname', '')
-                tel = ''.join(['+7'] + [i for i in tel if i.isdigit()][-10:])
-                Client.objects.get_or_create(phonenumber=tel, defaults={'name': first_name})
+        self.consultation_send()
         return context
 
 
-class CatalogListView(ListView):
+class CatalogListView(ListView, ConsultationSend):
     model = Bouquet
     queryset = Bouquet.objects.all()
     template_name = "flower_order/catalog.html"
@@ -34,6 +39,7 @@ class CatalogListView(ListView):
         context = super().get_context_data(**kwargs)
         bouquets = Bouquet.objects.annotate(number=Window(expression=DenseRank(), order_by=[F('pk').desc()]))
         item, blocks = [], []
+        self.consultation_send()
         if self.request.GET.get('display') == 'more':
             all_row = len(bouquets) // 3
             context['display'] = '1'
@@ -58,24 +64,31 @@ class CatalogListView(ListView):
         return context
 
 
-class Consultation(TemplateView):
+class Consultation(TemplateView, ConsultationSend):
     template_name = "flower_order/consultation.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        self.consultation_send()
+        return context
 
-class OrderView(TemplateView):
+
+class OrderView(TemplateView, ConsultationSend):
     template_name = "flower_order/order.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['bouquet_pk'] = self.request.GET.get('bouquet', 0)
+        self.consultation_send()
         return context
 
 
-class OrderStep(TemplateView):
+class OrderStep(TemplateView, ConsultationSend):
 
     def get_context_data(self, **kwargs):
         self.template_name = "flower_order/order-step.html"
         context = super().get_context_data(**kwargs)
+        self.consultation_send()
         if self.request.GET:
             tel = self.request.GET.get('tel', '')
             pattern = re.compile(r'^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$')
@@ -95,17 +108,23 @@ class OrderStep(TemplateView):
         return context
 
 
-class Quiz(ListView):
+class Quiz(ListView, ConsultationSend):
     model = Category
     context_object_name = 'categories'
     template_name = "flower_order/quiz.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        self.consultation_send()
+        return context
 
-class QuizStep(TemplateView):
+
+class QuizStep(TemplateView, ConsultationSend):
     template_name = "flower_order/quiz-step.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        self.consultation_send()
         event = self.request.GET.get('event', '')
         category = get_object_or_404(Category, title=event)
         context['event'] = event
@@ -122,11 +141,12 @@ class QuizStep(TemplateView):
         return context
 
 
-class Result(ListView):
+class Result(ListView, ConsultationSend):
     template_name = "flower_order/result.html"
     context_object_name = 'bouquet'
 
     def get_queryset(self):
+        self.consultation_send()
         if self.request.GET:
             event, min_price, max_price = self.request.GET.get('event', '').split('_')
             category = get_object_or_404(Category, title=event)
@@ -136,8 +156,13 @@ class Result(ListView):
             ).order_by('?').first()
 
 
-class Card(DetailView):
+class Card(DetailView, ConsultationSend):
     template_name = "flower_order/card.html"
     model = Bouquet
     context_object_name = 'bouquet'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        self.consultation_send()
+        return context
 
