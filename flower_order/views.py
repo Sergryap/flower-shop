@@ -1,6 +1,8 @@
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, TemplateView
 from .models import Bouquet, Category, Shop, Client, Order
+from django.db.models import Window, F
+from django.db.models.functions import DenseRank
 import re
 
 
@@ -19,17 +21,36 @@ class BouquetListView(ListView):
 class CatalogListView(ListView):
     model = Bouquet
     queryset = Bouquet.objects.all()
-    context_object_name = 'bouquets'
+    template_name = "flower_order/catalog.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # item_quantity = Bouquet.objects.count()
-        # if self.request.resolver_match.url_name == 'catalog':
-        context['block1'] = Bouquet.objects.all()[:3]
-        context['block2'] = Bouquet.objects.all()[3:6]
+        bouquets = Bouquet.objects.annotate(number=Window(expression=DenseRank(), order_by=[F('pk').desc()]))
+        item, blocks = [], []
+        if self.request.GET.get('display') == 'more':
+            all_row = len(bouquets) // 3
+            context['display'] = '1'
+            context['button_text'] = 'Скрыть'
+            context['block_name'] = 'Все букеты'
+        else:
+            all_row = 1
+            context['display'] = 'more'
+            context['button_text'] = 'Показать ещё'
+            context['block_name'] = 'Примеры букетов'
+        row_number = 0
+        for bouquet in bouquets:
+            item.append(bouquet)
+            if bouquet.number % 3 == 0:
+                blocks.append(item)
+                item = []
+                row_number += 1
+            if row_number == all_row:
+                break
+        blocks.append(item)
+        context['blocks'] = blocks
         return context
 
-    template_name = "flower_order/catalog.html"
+
 
 
 class Consultation(TemplateView):
