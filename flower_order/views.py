@@ -84,6 +84,14 @@ class OrderView(TemplateView, ConsultationSendMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['bouquet_pk'] = self.request.GET.get('bouquet', 0)
+        context['delivery_times'] = [
+            'Как можно скорее',
+            'с 10:00 до 12:00',
+            'с 12:00 до 14:00',
+            'с 14:00 до 16:00',
+            'с 16:00 до 18:00',
+            'с 18:00 до 20:00'
+        ]
         self.consultation_send()
         return context
 
