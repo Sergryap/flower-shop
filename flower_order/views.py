@@ -51,8 +51,6 @@ class CatalogListView(ListView):
         return context
 
 
-
-
 class Consultation(TemplateView):
     template_name = "flower_order/consultation.html"
 
