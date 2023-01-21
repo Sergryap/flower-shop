@@ -36,8 +36,12 @@
 						<hr class="result__items_line" />
 						<div class="result__items_intro">Хотите что-то более специальное?</div>
 						<div class="result__items_block">
+						<form action="{% url 'flower_order:catalog' %}">
 							<button class="btn largeBtn result__items_block__btn">Смотреть всю коллекцию</button>
+						</form>
+						<form action="{% url 'flower_order:consultation' %}">
 							<button class="btn largeBtn result__items_block__btn">Заказать консультацию</button>
+						</form>
 						</div>
 					</div>
 				</div>	
