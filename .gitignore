@@ -162,3 +162,4 @@ cython_debug/
 
 # Project ignore
 media/
+payment_bot.py
