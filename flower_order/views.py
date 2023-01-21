@@ -6,7 +6,7 @@ from django.db.models.functions import DenseRank
 import re
 
 
-class ConsultationSend:
+class ConsultationSendMixin:
 
     @staticmethod
     def phone_verify(tel):
@@ -22,7 +22,7 @@ class ConsultationSend:
                 Client.objects.get_or_create(phonenumber=tel, defaults={'name': first_name})
 
 
-class BouquetListView(ListView, ConsultationSend):
+class BouquetListView(ListView, ConsultationSendMixin):
     model = Bouquet
     queryset = Bouquet.objects.all()[:3]
     context_object_name = 'bouquets'
@@ -35,7 +35,7 @@ class BouquetListView(ListView, ConsultationSend):
         return context
 
 
-class CatalogListView(ListView, ConsultationSend):
+class CatalogListView(ListView, ConsultationSendMixin):
     model = Bouquet
     queryset = Bouquet.objects.all()
     template_name = "flower_order/catalog.html"
@@ -69,7 +69,7 @@ class CatalogListView(ListView, ConsultationSend):
         return context
 
 
-class Consultation(TemplateView, ConsultationSend):
+class Consultation(TemplateView, ConsultationSendMixin):
     template_name = "flower_order/consultation.html"
 
     def get_context_data(self, **kwargs):
@@ -78,7 +78,7 @@ class Consultation(TemplateView, ConsultationSend):
         return context
 
 
-class OrderView(TemplateView, ConsultationSend):
+class OrderView(TemplateView, ConsultationSendMixin):
     template_name = "flower_order/order.html"
 
     def get_context_data(self, **kwargs):
@@ -88,7 +88,7 @@ class OrderView(TemplateView, ConsultationSend):
         return context
 
 
-class OrderStep(TemplateView, ConsultationSend):
+class OrderStep(TemplateView, ConsultationSendMixin):
 
     def get_context_data(self, **kwargs):
         self.template_name = "flower_order/order-step.html"
@@ -112,7 +112,7 @@ class OrderStep(TemplateView, ConsultationSend):
         return context
 
 
-class Quiz(ListView, ConsultationSend):
+class Quiz(ListView, ConsultationSendMixin):
     model = Category
     context_object_name = 'categories'
     template_name = "flower_order/quiz.html"
@@ -123,7 +123,7 @@ class Quiz(ListView, ConsultationSend):
         return context
 
 
-class QuizStep(TemplateView, ConsultationSend):
+class QuizStep(TemplateView, ConsultationSendMixin):
     template_name = "flower_order/quiz-step.html"
 
     def get_context_data(self, **kwargs):
@@ -145,7 +145,7 @@ class QuizStep(TemplateView, ConsultationSend):
         return context
 
 
-class Result(ListView, ConsultationSend):
+class Result(ListView, ConsultationSendMixin):
     template_name = "flower_order/result.html"
     context_object_name = 'bouquet'
 
@@ -160,7 +160,7 @@ class Result(ListView, ConsultationSend):
             ).order_by('?').first()
 
 
-class Card(DetailView, ConsultationSend):
+class Card(DetailView, ConsultationSendMixin):
     template_name = "flower_order/card.html"
     model = Bouquet
     context_object_name = 'bouquet'
