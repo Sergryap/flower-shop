@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from django.views.generic import ListView, TemplateView
+from django.views.generic import ListView, TemplateView, DetailView
 from .models import Bouquet, Category, Shop, Client, Order
 from django.db.models import Window, F
 from django.db.models.functions import DenseRank
@@ -133,5 +133,8 @@ class Result(ListView):
             ).order_by('?').first()
 
 
-class Card(TemplateView):
+class Card(DetailView):
     template_name = "flower_order/card.html"
+    model = Bouquet
+    context_object_name = 'bouquet'
+

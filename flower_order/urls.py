@@ -25,5 +25,5 @@ urlpatterns = [
     path('quiz/', Quiz.as_view(), name='quiz'),
     path('quiz-step/', QuizStep.as_view(), name='quiz_step'),
     path('result/', Result.as_view(), name='result'),
-    path('card/', Card.as_view(), name='card'),
+    path('card/<int:pk>/', Card.as_view(), name='card'),
 ]
