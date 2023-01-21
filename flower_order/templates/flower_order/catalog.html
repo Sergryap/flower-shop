@@ -2,24 +2,24 @@
 {% load static %}
 {% block body_contain %}
 {% block add_style %}
-<style>
-.recommended__elems_first .recommended__block_first {
-	background: url('../../../static/img/catalog/catalogBg1.jpg') no-repeat center bottom / cover;
+<style type="text/css">
+.recommended__block {
+	display: flex;
+    align-items: end;
+	width: 398px;
+	height: 400px;
+	margin-right: 9px;
+	color: #666;
+	opacity: 0.85;
 }
-.recommended__elems_first .recommended__block_sec {
-	background: url('../../../static/img/catalog/catalogBg1.jpg') no-repeat center bottom / cover;
-}
-.recommended__elems_first .recommended__block_thr {
-	background: url('../../../static/img/catalog/catalogBg2.jpg') no-repeat center bottom / cover;
-}
-.recommended__elems_sec .recommended__block_first {
-	background: url('../../../static/img/catalog/catalogBg3.jpg') no-repeat center bottom / cover;
-}
-.recommended__elems_sec .recommended__block_sec {
-	background: url('../../../static/img/catalog/catalogBg4.jpg') no-repeat center bottom / cover;
-}
-.recommended__elems_sec .recommended__block_thr {
-	background: url('../../../static/img/catalog/catalogBg4.jpg') no-repeat center bottom / cover;
+.recommended__block:link {text-decoration: none}
+.recommended__block:visited {text-decoration: none}
+.recommended__block:active {text-decoration: none}
+.recommended__block:hover {
+    font-size: 24px;
+    font-weight: bold;
+    color: #17CF97;
+    opacity: 1;
 }
 </style>
 {% endblock %}
@@ -32,12 +32,12 @@
 					{% for block in blocks %}
 						<div class="recommended__elems ficb recommended__elems_{% cycle 'first' 'sec' %}">
 							{% for bouquet in block %}
-								<div class="recommended__block" style="background: url('{{ bouquet.image.url }}') no-repeat center bottom / cover;">
+								<a href="{% url 'flower_order:catalog' %}?bouquet_pk={{ bouquet.pk }}" class="recommended__block" style="background: url('{{ bouquet.image.url }}') no-repeat center bottom / cover;">
 									<div class="recommended__block_elems ficb">
 										<span class="recommended__block_intro">{{ bouquet.title }}</span>
 										<span class="recommended__block_price">{{ bouquet.price }} руб</span>
 									</div>
-								</div>
+								</a>
 							{% endfor %}
 						</div>
 					{% endfor %}
