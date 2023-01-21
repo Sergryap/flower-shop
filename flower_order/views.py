@@ -15,6 +15,13 @@ class BouquetListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['shops'] = Shop.objects.all()
+        if self.request.GET:
+            tel = self.request.GET.get('tel', '')
+            pattern = re.compile(r'^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$')
+            if bool(pattern.findall(tel)):
+                first_name = self.request.GET.get('fname', '')
+                tel = ''.join(['+7'] + [i for i in tel if i.isdigit()][-10:])
+                Client.objects.get_or_create(phonenumber=tel, defaults={'name': first_name})
         return context
 
 
@@ -79,10 +86,8 @@ class OrderStep(TemplateView):
                 address = self.request.GET.get('address', '')
                 bouquet_pk = self.request.GET.get('bouquet', '0')
                 order_time = self.request.GET.get('orderTime', '')
-                client, __ = Client.objects.get_or_create(
-                    phonenumber=tel,
-                    defaults={'name': first_name}
-                )
+                tel = ''.join(['+7'] + [i for i in tel if i.isdigit()][-10:])
+                client, __ = Client.objects.get_or_create(phonenumber=tel, defaults={'name': first_name})
                 order = Order.objects.create(client=client, address=address, comment=order_time)
                 if bouquet_pk and int(bouquet_pk):
                     bouquet = Bouquet.objects.get(pk=bouquet_pk)

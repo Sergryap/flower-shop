@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block body_contain %}
+
 {% block add_style %}
 <style type="text/css">
 .recommended__block {
@@ -23,6 +23,8 @@
 }
 </style>
 {% endblock %}
+
+{% block body_contain %}
 		<section id="banner">
 			<div class="container">
 				<div class="banner">
@@ -76,18 +78,6 @@
 				</div>
 				<form action="{% url 'flower_order:order' %}">
 					<button class="btn contacts__btn">Заказать доставку</button>
-				</form>
-			</div>
-		</div>
-	</section>
-	<section id="consultation">
-		<div class="container">
-			<div class="consultation">
-				<div class="title consultation__title">Оставьте заявку на консультацию</div>
-				<form action="{% url 'flower_order:consultation' %}" class="consultation__form">
-					<input type="text" name="fname" class="consultation__form_input" placeholder="Введите Имя" required>
-					<input type="text" name="tel" class="consultation__form_input" placeholder="+ 7 (999) 000 00 00" required>
-					<button type="submit" class="consultation__form_btn">Отправить</button>
 				</form>
 			</div>
 		</div>
