@@ -42,24 +42,17 @@ class BouquetListView(ListView, ConsultationSendMixin):
 
 class CatalogListView(ListView, ConsultationSendMixin):
     model = Bouquet
+    context_object_name = 'blocks'
     template_name = "flower_order/catalog.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def get_queryset(self):
         item, blocks = [], []
-        self.save_order_consultation()
         if self.request.GET.get('display') == 'more':
             bouquets = Bouquet.objects.annotate(number=Window(expression=DenseRank(), order_by=[F('pk').desc()]))
             all_row = len(bouquets) // 3
-            context['display'] = '1'
-            context['button_text'] = 'Скрыть'
-            context['block_name'] = 'Все букеты'
         else:
             bouquets = Bouquet.objects.annotate(number=Window(expression=DenseRank(), order_by=[Random()]))
             all_row = 2
-            context['display'] = 'more'
-            context['button_text'] = 'Показать ещё'
-            context['block_name'] = 'Примеры букетов'
         row_number = 0
         for bouquet in bouquets:
             item.append(bouquet)
@@ -70,7 +63,19 @@ class CatalogListView(ListView, ConsultationSendMixin):
             if row_number == all_row:
                 break
         blocks.append(item)
-        context['blocks'] = blocks
+        return blocks
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        self.save_order_consultation()
+        if self.request.GET.get('display') == 'more':
+            context['display'] = '1'
+            context['button_text'] = 'Скрыть'
+            context['block_name'] = 'Все букеты'
+        else:
+            context['display'] = 'more'
+            context['button_text'] = 'Показать всё'
+            context['block_name'] = 'Примеры букетов'
         return context
 
 
