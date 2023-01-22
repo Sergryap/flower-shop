@@ -43,7 +43,10 @@
 							</div>
 							<div class="order__form_line"></div>
 							<div class="order__form_btns ficb">
-								<button class="btn order__form_pay" name="price" value="{{ price }}">Оплатить</button>
+								<button class="btn order__form_pay" name="price" onclick="document.location='https://api.paybox.money/payment.php?pg_merchant_id=526740&pg_amount=200&pg_currency=RUB&pg_description=Футболка+с+принтом&pg_salt=kFQ4pYsAV1K531C0&pg_sig=26c83d710e86e916acffb80ea931a30e'">
+									Оплатить {{ price }}
+								</button>
+
 								<a class="btn order__form_btn" href="javascript:history.back()">Назад</a>
 							</div>
 						</form>

@@ -1,5 +1,5 @@
-from django.shortcuts import get_object_or_404
-from django.views.generic import ListView, TemplateView, DetailView
+from django.shortcuts import get_object_or_404, redirect
+from django.views.generic import ListView, TemplateView, DetailView, RedirectView
 from .models import Bouquet, Category, Shop, Client, Order
 from django.db.models import Window, F
 from django.db.models.functions import DenseRank
@@ -87,8 +87,9 @@ class OrderView(TemplateView, ConsultationSendMixin):
     template_name = "flower_order/order.html"
 
     def get_context_data(self, **kwargs):
+        bouquet_pk = self.request.GET.get('bouquet', 0)
         context = super().get_context_data(**kwargs)
-        context['bouquet_pk'] = self.request.GET.get('bouquet', 0)
+        context['bouquet_pk'] = bouquet_pk
         context['delivery_times'] = [
             'Как можно скорее',
             'с 10:00 до 12:00',
@@ -98,6 +99,11 @@ class OrderView(TemplateView, ConsultationSendMixin):
             'с 18:00 до 20:00'
         ]
         self.save_order_consultation()
+
+        if bouquet_pk and int(bouquet_pk):
+            bouquet = Bouquet.objects.get(pk=bouquet_pk)
+            context['price'] = f'{bouquet.price} ₽'
+
         return context
 
 
@@ -121,7 +127,7 @@ class OrderStep(TemplateView, ConsultationSendMixin):
                 if bouquet_pk and int(bouquet_pk):
                     bouquet = Bouquet.objects.get(pk=bouquet_pk)
                     order.bouquets.add(bouquet)
-                    context['price'] = bouquet.price
+                    context['price'] = f'{bouquet.price} ₽'
         # блок оплаты
         if self.request.GET.get('price', ''):
             self.template_name = "flower_order/order-step.html"
@@ -195,3 +201,26 @@ class Card(DetailView, ConsultationSendMixin):
         self.save_order_consultation()
         return context
 
+
+class OrderStepRedirectView(RedirectView, ConsultationSendMixin):
+    permanent = False
+
+    def get_redirect_url(self, *args, **kwargs):
+        tel = self.request.GET.get('tel', '')
+
+        if not self.verify_phone(tel):
+            self.template_name = "flower_order/order.html"
+        else:
+            first_name = self.request.GET.get('fname', '')
+            address = self.request.GET.get('address', '')
+            bouquet_pk = self.request.GET.get('bouquet', '0')
+            order_time = self.request.GET.get('orderTime', '')
+            tel = self.normalize_phone(tel)
+            client, __ = Client.objects.get_or_create(phonenumber=tel, defaults={'name': first_name})
+            order = Order.objects.create(client=client, address=address, comment=order_time, service='delivery')
+
+            if bouquet_pk and int(bouquet_pk):
+                bouquet = Bouquet.objects.get(pk=bouquet_pk)
+                order.bouquets.add(bouquet)
+
+        return super().get_redirect_url(*args, **kwargs)
