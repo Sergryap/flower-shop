@@ -56,7 +56,7 @@ class CatalogListView(ListView, ConsultationSendMixin):
             context['button_text'] = 'Скрыть'
             context['block_name'] = 'Все букеты'
         else:
-            all_row = 1
+            all_row = 2
             context['display'] = 'more'
             context['button_text'] = 'Показать ещё'
             context['block_name'] = 'Примеры букетов'
