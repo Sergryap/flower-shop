@@ -142,7 +142,7 @@ class Staff(models.Model):
         verbose_name_plural = 'сотрудники'
 
     def __str__(self):
-        return f'{self.get_position_display()}: {self.surname} {self.name}'
+        return f'{self.get_position_display()}: {self.name} {self.phonenumber}'
 
 
 class Client(models.Model):
@@ -170,7 +170,7 @@ class Client(models.Model):
         verbose_name_plural = 'клиенты'
 
     def __str__(self):
-        return f'{self.surname} {self.name}'
+        return f'{self.name} {self.phonenumber}'
 
 
 class Order(models.Model):
