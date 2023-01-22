@@ -13,13 +13,18 @@ class ConsultationSendMixin:
         pattern = re.compile(r'^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$')
         return bool(pattern.findall(tel))
 
+    @staticmethod
+    def normalize_phone(tel):
+        return ''.join(['+7'] + [i for i in tel if i.isdigit()][-10:])
+
     def consultation_send(self):
         if self.request.GET:
             tel = self.request.GET.get('tel', '')
             if self.phone_verify(tel):
                 first_name = self.request.GET.get('fname', '')
-                tel = ''.join(['+7'] + [i for i in tel if i.isdigit()][-10:])
-                Client.objects.get_or_create(phonenumber=tel, defaults={'name': first_name})
+                tel = self.normalize_phone(tel)
+                client, __ = Client.objects.get_or_create(phonenumber=tel, defaults={'name': first_name})
+                Order.objects.create(client=client, service='consultation', comment='Заявка на консультацию')
 
 
 class BouquetListView(ListView, ConsultationSendMixin):
@@ -111,9 +116,9 @@ class OrderStep(TemplateView, ConsultationSendMixin):
                 address = self.request.GET.get('address', '')
                 bouquet_pk = self.request.GET.get('bouquet', '0')
                 order_time = self.request.GET.get('orderTime', '')
-                tel = ''.join(['+7'] + [i for i in tel if i.isdigit()][-10:])
+                tel = self.normalize_phone(tel)
                 client, __ = Client.objects.get_or_create(phonenumber=tel, defaults={'name': first_name})
-                order = Order.objects.create(client=client, address=address, comment=order_time)
+                order = Order.objects.create(client=client, address=address, comment=order_time, service='delivery')
                 if bouquet_pk and int(bouquet_pk):
                     bouquet = Bouquet.objects.get(pk=bouquet_pk)
                     order.bouquets.add(bouquet)
@@ -153,8 +158,9 @@ class QuizStep(TemplateView, ConsultationSendMixin):
         event = self.request.GET.get('event', '')
         category = get_object_or_404(Category, title=event)
         context['event'] = event
-        max_price = round(category.bouquets.order_by('-price').first().price, 0)
-        min_price = round(category.bouquets.order_by('price').first().price, 0)
+        price_range = list(category.bouquets.order_by('price'))
+        max_price = round(price_range[-1].price, 0)
+        min_price = round(price_range[0].price, 0)
         prices = [
             {'min': '0', 'max': f'{min_price + 100}', 'text': f'До {min_price + 100} руб'},
             {'min': f'{min_price + 100}', 'max': f'{max_price - 100}', 'text': f'{min_price + 100} - {max_price - 100} руб'},
@@ -162,7 +168,6 @@ class QuizStep(TemplateView, ConsultationSendMixin):
             {'min': 0, 'max': 1000000, 'text': 'Не имеет значения'}
         ]
         context['prices'] = prices
-
         return context
 
 
