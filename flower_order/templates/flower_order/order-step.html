@@ -1,5 +1,21 @@
 {% extends 'base.html' %}
 {% load static %}
+
+{% block add_style %}
+<style type="text/css">
+.order__form_btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 365px;
+	height: 57px;
+	background: #D9FAF1;
+	color: #17CF97;
+	text-decoration: none;
+}
+</style>
+{% endblock %}
+
 {% block body_contain %}
 	<section id="orderStep">
 		<div class="container">
@@ -28,7 +44,7 @@
 							<div class="order__form_line"></div>
 							<div class="order__form_btns ficb">
 								<button class="btn order__form_pay" name="price" value="{{ price }}">Оплатить</button>
-								<button class="btn order__form_btn">Назад</button>
+								<a class="btn order__form_btn" href="javascript:history.back()">Назад</a>
 							</div>
 						</form>
 					</div>
