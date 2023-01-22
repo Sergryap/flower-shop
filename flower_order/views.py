@@ -9,7 +9,7 @@ import re
 class ConsultationSendMixin:
 
     @staticmethod
-    def phone_verify(tel):
+    def verify_phone(tel):
         pattern = re.compile(r'^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$')
         return bool(pattern.findall(tel))
 
@@ -17,10 +17,10 @@ class ConsultationSendMixin:
     def normalize_phone(tel):
         return ''.join(['+7'] + [i for i in tel if i.isdigit()][-10:])
 
-    def consultation_send(self):
+    def save_order_consultation(self):
         if self.request.GET:
             tel = self.request.GET.get('tel', '')
-            if self.phone_verify(tel):
+            if self.verify_phone(tel):
                 first_name = self.request.GET.get('fname', '')
                 tel = self.normalize_phone(tel)
                 client, __ = Client.objects.get_or_create(phonenumber=tel, defaults={'name': first_name})
@@ -36,7 +36,7 @@ class BouquetListView(ListView, ConsultationSendMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['shops'] = Shop.objects.all()
-        self.consultation_send()
+        self.save_order_consultation()
         return context
 
 
@@ -49,7 +49,7 @@ class CatalogListView(ListView, ConsultationSendMixin):
         context = super().get_context_data(**kwargs)
         bouquets = Bouquet.objects.annotate(number=Window(expression=DenseRank(), order_by=[F('pk').desc()]))
         item, blocks = [], []
-        self.consultation_send()
+        self.save_order_consultation()
         if self.request.GET.get('display') == 'more':
             all_row = len(bouquets) // 3
             context['display'] = '1'
@@ -79,7 +79,7 @@ class Consultation(TemplateView, ConsultationSendMixin):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        self.consultation_send()
+        self.save_order_consultation()
         return context
 
 
@@ -97,7 +97,7 @@ class OrderView(TemplateView, ConsultationSendMixin):
             'с 16:00 до 18:00',
             'с 18:00 до 20:00'
         ]
-        self.consultation_send()
+        self.save_order_consultation()
         return context
 
 
@@ -106,10 +106,10 @@ class OrderStep(TemplateView, ConsultationSendMixin):
     def get_context_data(self, **kwargs):
         self.template_name = "flower_order/order-step.html"
         context = super().get_context_data(**kwargs)
-        self.consultation_send()
+        self.save_order_consultation()
         if self.request.GET:
             tel = self.request.GET.get('tel', '')
-            if not self.phone_verify(tel):
+            if not self.verify_phone(tel):
                 self.template_name = "flower_order/order.html"
             else:
                 first_name = self.request.GET.get('fname', '')
@@ -145,7 +145,7 @@ class Quiz(ListView, ConsultationSendMixin):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        self.consultation_send()
+        self.save_order_consultation()
         return context
 
 
@@ -154,7 +154,7 @@ class QuizStep(TemplateView, ConsultationSendMixin):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        self.consultation_send()
+        self.save_order_consultation()
         event = self.request.GET.get('event', '')
         category = get_object_or_404(Category, title=event)
         context['event'] = event
@@ -176,7 +176,7 @@ class Result(ListView, ConsultationSendMixin):
     context_object_name = 'bouquet'
 
     def get_queryset(self):
-        self.consultation_send()
+        self.save_order_consultation()
         if self.request.GET:
             event, min_price, max_price = self.request.GET.get('event', '').split('_')
             category = get_object_or_404(Category, title=event)
@@ -193,6 +193,6 @@ class Card(DetailView, ConsultationSendMixin):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        self.consultation_send()
+        self.save_order_consultation()
         return context
 
