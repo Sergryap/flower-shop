@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, TemplateView, DetailView
 from .models import Bouquet, Category, Shop, Client, Order
 from django.db.models import Window, F
-from django.db.models.functions import DenseRank
+from django.db.models.functions import DenseRank, Random
 import re
 
 
@@ -29,7 +29,7 @@ class ConsultationSendMixin:
 
 class BouquetListView(ListView, ConsultationSendMixin):
     model = Bouquet
-    queryset = Bouquet.objects.all()[:3]
+    queryset = Bouquet.objects.annotate(number=Window(expression=DenseRank(), order_by=[Random()]))[:3]
     context_object_name = 'bouquets'
     template_name = "flower_order/index.html"
 
@@ -42,20 +42,20 @@ class BouquetListView(ListView, ConsultationSendMixin):
 
 class CatalogListView(ListView, ConsultationSendMixin):
     model = Bouquet
-    queryset = Bouquet.objects.all()
     template_name = "flower_order/catalog.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        bouquets = Bouquet.objects.annotate(number=Window(expression=DenseRank(), order_by=[F('pk').desc()]))
         item, blocks = [], []
         self.save_order_consultation()
         if self.request.GET.get('display') == 'more':
+            bouquets = Bouquet.objects.annotate(number=Window(expression=DenseRank(), order_by=[F('pk').desc()]))
             all_row = len(bouquets) // 3
             context['display'] = '1'
             context['button_text'] = 'Скрыть'
             context['block_name'] = 'Все букеты'
         else:
+            bouquets = Bouquet.objects.annotate(number=Window(expression=DenseRank(), order_by=[Random()]))
             all_row = 2
             context['display'] = 'more'
             context['button_text'] = 'Показать ещё'
