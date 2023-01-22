@@ -72,7 +72,9 @@
 						<script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3Ae7fa8f1f4d9486333bed8121193c663422c312713f8a1b1acd4532a641258273&amp;width=398&amp;height=316&amp;lang=ru_RU&amp;scroll=true"></script>
 					</div>					
 				</div>
-				<button class="btn contacts__btn">Заказать доставку</button>
+				<form action="{% url 'flower_order:order' %}">
+					<button class="btn result__items_btn" name="bouquet" value="{{ bouquet.pk }}">Заказать букет</button>
+				</form>
 			</div>
 		</div>
 	</section>
