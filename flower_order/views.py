@@ -106,7 +106,6 @@ class OrderStep(TemplateView, ConsultationSendMixin):
     def get_context_data(self, **kwargs):
         self.template_name = "flower_order/order-step.html"
         context = super().get_context_data(**kwargs)
-        self.save_order_consultation()
         if self.request.GET:
             tel = self.request.GET.get('tel', '')
             if not self.verify_phone(tel):
