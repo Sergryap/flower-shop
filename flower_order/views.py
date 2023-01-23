@@ -214,7 +214,8 @@ class OrderStepRedirectView(RedirectView, ConsultationSendMixin):
         tel = self.request.GET.get('tel', '')
 
         if not self.verify_phone(tel):
-            self.template_name = "flower_order/order.html"
+            self.url = self.request.META.get('HTTP_REFERER')
+            return super().get_redirect_url(*args, **kwargs)
         else:
             first_name = self.request.GET.get('fname', '')
             address = self.request.GET.get('address', '')
